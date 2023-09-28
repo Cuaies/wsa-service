@@ -17,5 +17,9 @@
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "typescript": "^5.2.2"
-  }
+  },
+  "workspaces": [
+    "packages/server",
+    "packages/client"
+  ]
 }
