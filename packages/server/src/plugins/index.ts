@@ -1,5 +1,6 @@
 import { fastifyHelmet } from "@fastify/helmet";
 import fastifyPlugin from "fastify-plugin";
+import fastifyFormbody from "@fastify/formbody";
 import { router } from "../routes";
 
 /**
@@ -7,6 +8,7 @@ import { router } from "../routes";
  */
 export const plugins = fastifyPlugin((server, _, done) => {
   server.register(fastifyHelmet);
+  server.register(fastifyFormbody);
   server.register(router);
 
   done();

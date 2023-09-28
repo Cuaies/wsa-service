@@ -7,7 +7,6 @@ const server = Fastify({
   logger: LoggerConfig["development"],
 });
 
-// TODO: relocate this
 await server.setErrorHandler(function (error, request, reply) {
   if (error instanceof Fastify.errorCodes.FST_ERR_BAD_STATUS_CODE) {
     this.log.error(error);
