@@ -4,10 +4,9 @@
   @include themify($themes) {
     display: flex;
     align-items: center;
-    padding: 2vh 8vh;
-    justify-content: right;
-    border-bottom: 2px solid themed("fill");
-    box-shadow: 1px 1px 27px 0px rgba(0, 0, 0, 0.1);
+    padding: 0 8vh;
+    border-right: 2px solid themed("fill");
+    box-shadow: 1px 1px 27px 0px #0000001a;
     -webkit-box-shadow: 1px 1px 27px 0px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 1px 1px 27px 0px rgba(0, 0, 0, 0.1);
 
@@ -24,6 +23,7 @@
       display: flex;
       justify-content: right;
       flex-direction: row;
+      padding-left: 5rem;
       gap: 3rem;
 
       #theme-selector {
