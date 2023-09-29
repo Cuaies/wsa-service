@@ -39,7 +39,7 @@ $themes: (
 * {
   margin: 0;
   padding: 0;
-  font-family: "DM Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
 
   @include themify($themes) {
     color: themed("textColor");
