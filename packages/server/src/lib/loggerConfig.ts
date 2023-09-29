@@ -2,7 +2,7 @@
  * Logger's `pino-pretty` configuration,
  * having each key representing a different environment.
  */
-export const LoggerConfig = {
+export const LoggerConfig: { [key: string]: any } = {
   development: {
     transport: {
       target: "pino-pretty",
