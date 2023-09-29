@@ -1,0 +1,52 @@
+@import "../../index.scss";
+
+#landing {
+  height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+
+  .container {
+    @include themify($themes) {
+      display: flex;
+      margin: 0;
+
+      .form-container {
+        padding: 5vh 10vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 1rem;
+
+        .text {
+          display: flex;
+          flex-direction: column;
+          border: 2px solid themed("textColor");
+          padding: 0.5vh 1vh;
+          border-radius: 15px;
+          font-weight: bold;
+        }
+
+        label {
+          text-align: center;
+          font-size: 1rem;
+          margin-right: 0.3rem;
+          font-weight: 600;
+        }
+
+        button {
+          border: 2px solid themed("textColor");
+          padding: 0.5vh 1vh;
+          border-radius: 15px;
+          font-weight: 700;
+
+          &:hover {
+            cursor: pointer;
+            background-color: themed("textColor");
+            color: themed("bg");
+          }
+        }
+      }
+    }
+  }
+}
