@@ -4,21 +4,31 @@
   @include themify($themes) {
     display: flex;
     align-items: center;
-    padding: 4vh 8vh;
+    padding: 2vh 8vh;
     justify-content: right;
-    border-bottom: 3px solid themed("fill");
+    border-bottom: 2px solid themed("fill");
     box-shadow: 1px 1px 27px 0px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 1px 1px 27px 0px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 1px 1px 27px 0px rgba(0, 0, 0, 0.1);
 
+    .center {
+      flex: 1;
+      flex-direction: column;
+      display: flex;
+      justify-content: center;
+      align-items: align;
+      text-align: center;
+    }
+
     .right {
+      display: flex;
       justify-content: right;
-      align-items: center;
+      flex-direction: row;
+      gap: 3rem;
 
       #theme-selector {
         display: flex;
         text-align: center;
-        gap: 20px;
       }
     }
   }
