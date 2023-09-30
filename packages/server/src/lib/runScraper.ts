@@ -1,5 +1,5 @@
 import puppeteer, { Page } from "puppeteer";
-import { ParseContent, ScraperOptions } from "../ts/interfaces";
+import { ScraperOptions } from "../ts/interfaces";
 
 /**
  * Main method for interacting with the scraper.
@@ -7,7 +7,6 @@ import { ParseContent, ScraperOptions } from "../ts/interfaces";
 export const runScraper = async (opts: ScraperOptions) => {
   // TODO: add conditional logic for fetchLinks and fetchImages
   const { url, viewport, goToOpts } = opts;
-  const content: ParseContent = { h3: [], p: [] };
 
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
@@ -25,9 +24,9 @@ export const runScraper = async (opts: ScraperOptions) => {
 
     Object.assign(article, { content: await scrapeArticle(articlePage) });
   }
-  console.log(articles);
+
   await browser.close();
-  return JSON.stringify(content);
+  return JSON.stringify(articles);
 };
 
 /**

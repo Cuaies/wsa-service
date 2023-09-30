@@ -9,7 +9,15 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
       return;
     }
 
-    res.send(await runScraper(req.body));
+    const scrapingData = await runScraper(req.body);
+
+    if (!scrapingData) {
+      res.status(500).send({ error: "Internal server error" });
+      return;
+    }
+
+    // TODO: add download option
+    res.send(scrapingData);
   });
 
   done();
