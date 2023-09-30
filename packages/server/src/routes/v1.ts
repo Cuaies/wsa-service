@@ -1,6 +1,6 @@
 import cache from "memory-cache";
 import { FastifyPluginCallback } from "fastify";
-import { runScraper } from "../lib/runScraper";
+import { runScraper } from "../lib/scraper";
 import { isScraperOptions } from "../util/typeguards";
 
 export const v1: FastifyPluginCallback = (server, _, done) => {
@@ -35,8 +35,17 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
       }
     }
 
-    // TODO: add download option
-    res.send(scrapingData);
+    if (req.query.download) {
+      const scrapingJSONBuffer = Buffer.from(scrapingData, "utf-8");
+      res.header(
+        "Content-Disposition",
+        `attachment; filename=scraping-${Date.now()}.json`
+      );
+      res.header("Content-Type", "application/octet-stream");
+      res.send(scrapingJSONBuffer);
+    } else {
+      res.send(scrapingData);
+    }
   });
 
   done();
