@@ -12,10 +12,32 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
 
     let scrapingData = null;
 
-    if (process.env.CACHING?.toLowerCase() === "true") {
-      scrapingData = cache.get(req.query.url);
+    if (process.env.CACHING === "true") {
+      scrapingData = JSON.parse(cache.get(req.query.url));
 
-      if (!scrapingData) {
+      if (scrapingData) {
+        if (req.query.fetchImages !== "true") {
+          if (scrapingData.images) {
+            delete scrapingData.images;
+          }
+        } else {
+          if (!scrapingData.images) {
+            scrapingData = await runScraper(req.query);
+            cache.put(req.query.url, scrapingData, 60000 * 1);
+          }
+        }
+
+        if (req.query.fetchLinks !== "true") {
+          if (scrapingData.links) {
+            delete scrapingData.links;
+          }
+        } else {
+          if (!scrapingData.links) {
+            scrapingData = await runScraper(req.query);
+            cache.put(req.query.url, scrapingData, 60000 * 1);
+          }
+        }
+      } else {
         try {
           scrapingData = await runScraper(req.query);
           cache.put(req.query.url, scrapingData, 60000 * 1);
@@ -30,12 +52,14 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
         scrapingData = await runScraper(req.query);
       } catch (err) {
         server.log.error(err);
-        res.status(500).send({ error: "Internal server error" });
+        res.status(500).send({ err });
         return;
       }
     }
 
-    if (req.query.download) {
+    scrapingData = JSON.stringify(scrapingData);
+
+    if (req.query.download === "true") {
       const scrapingJSONBuffer = Buffer.from(scrapingData, "utf-8");
       res.header(
         "Content-Disposition",

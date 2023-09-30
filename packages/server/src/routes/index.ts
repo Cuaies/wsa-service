@@ -5,7 +5,7 @@ export const router = fastifyPlugin(
   (server, _, done) => {
     server.register(v1);
 
-    server.get("/", (req, res) => {
+    server.get("/", (_, res) => {
       res.sendFile("index.html");
     });
 
