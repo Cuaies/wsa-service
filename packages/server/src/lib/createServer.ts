@@ -7,7 +7,10 @@ import { plugins } from "../plugins";
  */
 export const createServer = async () => {
   const server = Fastify({
-    logger: process.env.NODE_ENV ? LoggerConfig[process.env.NODE_ENV] : false,
+    logger:
+      process.env.NODE_ENV === "production"
+        ? LoggerConfig["production"]
+        : LoggerConfig["development"],
   });
 
   await server.setErrorHandler(function (error, req, res) {
