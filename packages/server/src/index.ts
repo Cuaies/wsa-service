@@ -1,3 +1,4 @@
+import "memory-cache";
 import "dotenv/config";
 import { createServer } from "./lib/createServer";
 import { loadBalancer } from "./lib/loadBalancer";
