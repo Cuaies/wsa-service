@@ -3,11 +3,9 @@ import NavBar from "../../components/navBar/NavBar";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { isURL } from "../../validators/isURL";
 import { FormValues } from "../../ts/interface/FormValues.interface";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Landing() {
-  const navigate = useNavigate();
-
   return (
     <div id="landing">
       <NavBar />
@@ -19,7 +17,33 @@ export default function Landing() {
             fetchLinks: false,
             download: false,
           }}
-          onSubmit={async (values: FormValues) => {}}
+          onSubmit={async (values: FormValues) => {
+            try {
+              const res = await axios.get(`/v1`, {
+                params: values,
+              });
+
+              if (values.download) {
+                const blob = new Blob([JSON.stringify(res.data)], {
+                  type: "application/json",
+                });
+                const blobURL = URL.createObjectURL(blob);
+                const downloadLink = document.createElement("a");
+                downloadLink.href = blobURL;
+                downloadLink.download = `scrape-${Date.now()}.json`;
+                downloadLink.click();
+              } else {
+                const blob = new Blob([JSON.stringify(res.data)], {
+                  type: "application/json",
+                });
+                const blobURL = URL.createObjectURL(blob);
+                window.open(blobURL);
+                URL.revokeObjectURL(blobURL);
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }}
         >
           {() => (
             <Form>
