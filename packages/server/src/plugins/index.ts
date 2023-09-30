@@ -13,7 +13,7 @@ export const plugins = fastifyPlugin((server, _, done) => {
   server.register(fastifyFormbody);
   server.register(router);
   server.register(fastifyStatic, {
-    root: path.resolve("./../client/build"),
+    root: path.resolve(path.normalize("./../client/build")),
   });
 
   done();
