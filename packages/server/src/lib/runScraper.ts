@@ -1,11 +1,12 @@
-import puppeteer from "puppeteer";
+import puppeteer, { Page } from "puppeteer";
 import { ParseContent, ScraperOptions } from "../ts/interfaces";
 
 /**
  * Main method for interacting with the scraper.
  */
 export const runScraper = async (opts: ScraperOptions) => {
-  const { url, viewport, goToOpts, fetchLinks, fetchImages } = opts;
+  // TODO: add conditional logic for fetchLinks and fetchImages
+  const { url, viewport, goToOpts } = opts;
   const content: ParseContent = { h3: [], p: [] };
 
   const browser = await puppeteer.launch({ headless: "new" });
@@ -14,30 +15,115 @@ export const runScraper = async (opts: ScraperOptions) => {
   viewport && (await page.setViewport(viewport));
   await page.goto(url, goToOpts);
 
-  const h3 = await page.evaluate(() =>
-    Array.from(document.querySelectorAll("h3")).map((h3) => h3.innerText)
-  );
-  content["h3"] = h3;
+  const articles = await scrapeArticleCards(page);
 
-  const p = await page.evaluate(() =>
-    Array.from(document.querySelectorAll("p")).map((p) => p.innerText)
-  );
-  content["p"] = p;
+  for (const article of articles) {
+    if (article.articleLink === undefined) return;
 
-  if (fetchLinks) {
-    const links = await page.evaluate(() =>
-      Array.from(document.querySelectorAll("a")).map((link) => link.href)
-    );
-    content["links"] = links;
+    const articlePage = await browser.newPage();
+    await articlePage.goto(article.articleLink, goToOpts);
+
+    Object.assign(article, { content: await scrapeArticle(articlePage) });
   }
-
-  if (fetchImages) {
-    const images = await page.evaluate(() =>
-      Array.from(document.querySelectorAll("img")).map((img) => img.src)
-    );
-    content["images"] = images;
-  }
-
+  console.log(articles);
   await browser.close();
   return JSON.stringify(content);
+};
+
+/**
+ * Simple method for scraping article cards.
+ */
+const scrapeArticleCards = async (page: Page) => {
+  const selector =
+    "html > body > div > main > div > div > div:not(:first-child) > div";
+
+  await page.waitForSelector(selector);
+
+  return await page.evaluate(
+    (selector) =>
+      Array.from(document.querySelectorAll(selector), (el) => {
+        const articleLink = el.querySelector("a")?.href;
+        const imageLink = el.querySelector("img")?.src;
+
+        const metadata = el.querySelector("div:nth-child(2) > div");
+        const time = metadata?.firstChild?.textContent;
+        const category = metadata?.lastChild?.textContent;
+
+        const text = metadata?.nextSibling;
+        const title = text?.firstChild?.textContent;
+        const summary = text?.lastChild?.textContent;
+
+        const author = el.querySelector("div:nth-child(3)");
+        const authorAvatar = author?.querySelector("img")?.src;
+        const authorText = author?.lastChild;
+        const authorName = authorText?.firstChild?.textContent;
+        const authorProfession = authorText?.lastChild?.textContent;
+
+        return {
+          articleLink,
+          imageLink,
+          time,
+          category,
+          title,
+          summary,
+          author: {
+            avatar: authorAvatar,
+            name: authorName,
+            profession: authorProfession,
+          },
+        };
+      }),
+    selector
+  );
+};
+
+const scrapeArticle = async (page: Page) => {
+  const selector =
+    "div > div > div > div > div:nth-child(2) > div > div:nth-child(3)";
+
+  await page.waitForSelector(selector);
+
+  return await page.evaluate((selector) => {
+    const container = document.querySelector(selector);
+    if (!container) return;
+
+    const children = Array.from(container.children);
+    const content = [];
+
+    let currentHeader = "";
+    let currentDescription = "";
+
+    for (let i = 0; i < children.length; i++) {
+      const element = children[i];
+      const text = element.textContent?.trim();
+
+      if (!text) continue;
+
+      if (text.length <= 70) {
+        if (currentHeader && currentDescription) {
+          content.push({
+            header: currentHeader,
+            description: currentDescription,
+          });
+          currentDescription = "";
+        }
+        currentHeader = text;
+      } else {
+        if (currentDescription) {
+          currentDescription += " " + text;
+        } else {
+          currentDescription = text;
+        }
+      }
+    }
+
+    if (currentHeader) {
+      content.push({
+        header: currentHeader,
+        description: currentDescription,
+      });
+    }
+
+    return content;
+  }, selector);
 };
