@@ -1,0 +1,28 @@
+@import "../../../index.scss";
+
+.error-body {
+  @include themify($themes) {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+
+    .error-body-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .error-code {
+        font-weight: bolder;
+        padding-right: 4px;
+        font-size: 40px;
+        border-right: 3px solid themed("fill");
+      }
+
+      .error-message {
+        margin-left: 6px;
+        font-size: 14px;
+        white-space: normal;
+      }
+    }
+  }
+}
