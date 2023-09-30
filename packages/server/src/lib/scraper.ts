@@ -1,6 +1,5 @@
 import puppeteer, { Page } from "puppeteer";
 import { Article, ScraperData, ScraperOptions } from "../ts/interfaces";
-import { Content } from "../ts/interfaces/Content.interface";
 
 /**
  * Main method for interacting with the scraper.
@@ -16,11 +15,11 @@ export const runScraper = async (opts: ScraperOptions) => {
 
   scrapingData["articles"] = await scrapeArticleCards(page);
 
-  if (fetchImages) {
+  if (fetchImages === "true") {
     scrapingData["images"] = await scrapeImages(page);
   }
 
-  if (fetchLinks) {
+  if (fetchLinks === "true") {
     scrapingData["links"] = await scrapeLinks(page);
   }
 
@@ -30,7 +29,7 @@ export const runScraper = async (opts: ScraperOptions) => {
     const articlePage = await browser.newPage();
     await articlePage.goto(article.articleLink, goToOpts);
 
-    Object.assign(article, { content: await scrapeArticle(articlePage) });
+    article.content = await scrapeArticle(articlePage);
   }
 
   await browser.close();
@@ -87,62 +86,55 @@ const scrapeArticleCards = async (page: Page): Promise<Article[]> => {
 /**
  * Scrapes the article page for it's text.
  */
-const scrapeArticle = async (page: Page): Promise<Content[]> => {
+const scrapeArticle = async (page: Page) => {
   const selector =
     "div > div > div > div > div:nth-child(2) > div > div:nth-child(3)";
 
   await page.waitForSelector(selector);
 
-  const content: Content[] = [];
+  return await page.evaluate((selector) => {
+    const container = document.querySelector(selector);
+    if (!container) return;
 
-  await page.evaluate(
-    (selector, content) => {
-      const container = document.querySelector(selector);
-      if (!container) return;
+    const children = Array.from(container.children);
 
-      const children = Array.from(container.children);
+    const content = [];
+    let currentHeader = "";
+    let currentDescription = "";
 
-      let currentHeader = "";
-      let currentDescription = "";
+    for (let i = 0; i < children.length; i++) {
+      const element = children[i];
+      const text = element.textContent?.trim();
 
-      for (let i = 0; i < children.length; i++) {
-        const element = children[i];
-        const text = element.textContent?.trim();
+      if (!text) continue;
 
-        if (!text) continue;
-
-        if (text.length <= 70) {
-          if (currentHeader && currentDescription) {
-            content.push({
-              header: currentHeader,
-              description: currentDescription,
-            });
-            currentDescription = "";
-          }
-          currentHeader = text;
+      if (text.length <= 70) {
+        if (currentHeader && currentDescription) {
+          content.push({
+            header: currentHeader,
+            description: currentDescription,
+          });
+          currentDescription = "";
+        }
+        currentHeader = text;
+      } else {
+        if (currentDescription) {
+          currentDescription += " " + text;
         } else {
-          if (currentDescription) {
-            currentDescription += " " + text;
-          } else {
-            currentDescription = text;
-          }
+          currentDescription = text;
         }
       }
+    }
 
-      if (currentHeader) {
-        content.push({
-          header: currentHeader,
-          description: currentDescription,
-        });
-      }
+    if (currentHeader) {
+      content.push({
+        header: currentHeader,
+        description: currentDescription,
+      });
+    }
 
-      return content;
-    },
-    selector,
-    content
-  );
-
-  return content;
+    return content;
+  }, selector);
 };
 
 /**

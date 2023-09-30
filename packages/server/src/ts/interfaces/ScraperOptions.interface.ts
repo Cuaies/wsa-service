@@ -5,8 +5,8 @@ import { GoToOptions } from "puppeteer";
  */
 export interface ScraperOptions {
   url: string;
-  fetchLinks?: boolean;
-  fetchImages?: boolean;
-  download?: boolean;
+  fetchLinks?: string;
+  fetchImages?: string;
+  download?: string;
   goToOpts?: GoToOptions;
 }
