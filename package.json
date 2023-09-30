@@ -8,13 +8,15 @@
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
     "start:server": "npm run build && npm run start -w packages/server",
-    "start:client": "npm run start -w packages/client"
+    "start:client": "npm run start -w packages/client",
+    "start:prod": "cross-env NODE_ENV=production npm run build -w packages/client && npm run start:server"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.7.0",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
+    "cross-env": "^7.0.3",
     "eslint": "^8.50.0",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
