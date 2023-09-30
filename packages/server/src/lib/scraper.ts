@@ -149,17 +149,17 @@ const scrapeArticle = async (page: Page): Promise<Content[]> => {
  * Scrapes the images within the entire page.
  */
 const scrapeImages = async (page: Page): Promise<string[]> => {
-  await page.waitForSelector("img");
+  const uniqueImages: string[] = [];
 
-  const images: string[] = [];
-
-  await page.evaluate(
-    (images) =>
-      Array.from(document.images, (e) =>
-        images.includes(e.src) ? null : e.src
-      ),
-    images
+  const images = await page.evaluate(() =>
+    Array.from(document.images, (e) => e.src)
   );
+
+  images.forEach((image) => {
+    if (!uniqueImages.includes(image)) {
+      uniqueImages.push(image);
+    }
+  });
 
   return images;
 };
@@ -168,17 +168,17 @@ const scrapeImages = async (page: Page): Promise<string[]> => {
  * Scrapes the links within the entire page.
  */
 const scrapeLinks = async (page: Page): Promise<string[]> => {
-  await page.waitForSelector("a");
+  const uniqueLinks: string[] = [];
 
-  const links: string[] = [];
-
-  page.evaluate(
-    (links) =>
-      Array.from(document.links, (e) =>
-        links.includes(e.href) ? null : e.href
-      ),
-    links
+  const links = await page.evaluate(() =>
+    Array.from(document.links, (e) => e.href)
   );
 
-  return links;
+  links.forEach((link) => {
+    if (!uniqueLinks.includes(link)) {
+      uniqueLinks.push(link);
+    }
+  });
+
+  return uniqueLinks;
 };
