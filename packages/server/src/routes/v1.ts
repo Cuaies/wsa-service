@@ -4,7 +4,7 @@ import { runScraper } from "../lib/scraper";
 import { isScraperOptions } from "../util/typeguards";
 
 export const v1: FastifyPluginCallback = (server, _, done) => {
-  server.get("/", async (req, res) => {
+  server.get("/v1", async (req, res) => {
     if (!req.query || !isScraperOptions(req.query)) {
       res.status(400).send({ error: "Invalid request body" });
       return;
@@ -18,7 +18,7 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
       if (!scrapingData) {
         try {
           scrapingData = await runScraper(req.query);
-          cache.put(req.query.url, scrapingData, 6000);
+          cache.put(req.query.url, scrapingData, 60000 * 1);
         } catch (err) {
           server.log.error(err);
           res.status(500).send({ error: "Internal server error" });

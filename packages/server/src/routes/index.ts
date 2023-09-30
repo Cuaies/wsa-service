@@ -3,7 +3,11 @@ import { v1 } from "./v1";
 
 export const router = fastifyPlugin(
   (server, _, done) => {
-    server.register(v1, { prefix: "/" });
+    server.register(v1);
+
+    server.get("/", (req, res) => {
+      res.sendFile("index.html");
+    });
 
     server.log.info("Route registration complete");
     done();
