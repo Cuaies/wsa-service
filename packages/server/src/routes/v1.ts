@@ -1,7 +1,11 @@
 import cache from "memory-cache";
 import { FastifyPluginCallback } from "fastify";
 import { runScraper } from "../lib/scraper";
-import { isScraperOptions } from "../util/typeguards";
+import {
+  isScraperOptions,
+  isSentimentalAnalysisOptions,
+} from "../util/typeguards";
+import { sentimentAnalysis } from "../lib/sentimentAnalysis";
 
 export const v1: FastifyPluginCallback = (server, _, done) => {
   server.get("/v1", async (req, res) => {
@@ -69,6 +73,19 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
     } else {
       res.send(scrapingData);
     }
+  });
+
+  server.post("/v1/sentiment-analysis", async (req, res) => {
+    if (
+      !req.query ||
+      !isSentimentalAnalysisOptions(req.query) ||
+      req.query.text.length > 2048
+    ) {
+      res.status(400).send({ error: "Invalid request body" });
+      return;
+    }
+
+    res.send(await sentimentAnalysis(req.query.text));
   });
 
   done();

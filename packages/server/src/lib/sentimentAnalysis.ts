@@ -4,7 +4,9 @@ import Sentiment from "sentiment";
 /**
  * Converts strings to sentiment scores.
  */
-export const sentimentAnalysis = async (text: string): Promise<number> => {
+export const sentimentAnalysis = async (
+  text: string
+): Promise<{ [result: string]: number }> => {
   try {
     text = JSON.parse(text);
   } catch (err) {
@@ -12,5 +14,5 @@ export const sentimentAnalysis = async (text: string): Promise<number> => {
   }
 
   const sentiment = new Sentiment();
-  return sentiment.analyze(text).score as number;
+  return { result: sentiment.analyze(text).score as number };
 };
