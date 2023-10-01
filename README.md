@@ -6,9 +6,9 @@ This is a simple concept project for a web scraping API, made only in 2 days, wi
 
 ## Features
 
-- **Load Balancer** - Simple load balancer, made with the built-in `cluster` module, add support for the project to use every core of its processor to reduce API stress.
+- **Load Balancer** - Simple load balancer, made with the built-in `cluster` module, adds support for the project to use every core of its processor to reduce API stress.
 
-- **Caching** - Rudimentary yet effective caching system, made possible
+- **Caching** - Rudimentary yet effective caching system, made possible by using the `memory-cache` package, which allows for a simple key-value storage.
 
 - **Made with TypeScript** - TypeScript is a statically typed superset of JavaScript, known for its enhanced type-checking capabilities and improved developer tooling.
 
@@ -33,19 +33,19 @@ This is a simple concept project for a web scraping API, made only in 2 days, wi
 2. Navigate to its directory:
 
 ```sh
-    cd wsa-service
+    $ cd wsa-service
 ```
 
 3. Install dependencies:
 
 ```sh
-    npm install
+    $ npm install
 ```
 
 4. The easiest way to start the project is by running the `start:prod` script:
 
 ```sh
-    npm run start:prod
+    $ npm run start:prod
 ```
 
 **WARNING!** The client might have issues rendering on Safari browsers.
