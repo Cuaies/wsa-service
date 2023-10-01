@@ -108,11 +108,25 @@ export default function Landing() {
             return errors;
           }}
           onSubmit={async (values) => {
-            const res = await axios.get(`/v1/sentiment-analysis`, {
-              params: values,
-            });
+            let res, text;
 
-            setSentimentalAnalysis(res.data.result);
+            try {
+              text = JSON.stringify(values.text);
+            } catch (error) {
+              text = values.text;
+            }
+
+            try {
+              res = await axios.get(`/v1/sentiment-analysis`, {
+                params: { text },
+              });
+            } catch (err) {
+              console.error(err);
+            }
+
+            if (res) {
+              setSentimentalAnalysis(res.data.result);
+            }
           }}
         >
           {() => (
