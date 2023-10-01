@@ -9,6 +9,7 @@
     @include themify($themes) {
       display: flex;
       margin: 0;
+      flex-flow: column;
 
       .form-container {
         padding: 5vh 10vh;
@@ -17,6 +18,11 @@
         align-items: center;
         flex-direction: row;
         gap: 1rem;
+
+        textarea {
+          resize: none;
+          width: 100%;
+        }
 
         .text {
           display: flex;
@@ -45,6 +51,16 @@
             background-color: themed("textColor");
             color: themed("bg");
           }
+        }
+      }
+
+      .textarea {
+        form {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
         }
       }
     }

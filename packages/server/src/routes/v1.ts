@@ -75,7 +75,7 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
     }
   });
 
-  server.post("/v1/sentiment-analysis", async (req, res) => {
+  server.get("/v1/sentiment-analysis", async (req, res) => {
     if (
       !req.query ||
       !isSentimentalAnalysisOptions(req.query) ||

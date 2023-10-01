@@ -4,8 +4,21 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import { isURL } from "../../validators/isURL";
 import { FormValues } from "../../ts/interface/FormValues.interface";
 import axios from "axios";
+import { useState } from "react";
 
 export default function Landing() {
+  const [sentimentalAnalysis, setSentimentalAnalysis] = useState(Infinity);
+
+  const getAnalysisColor = (result: number = sentimentalAnalysis) => {
+    if (result > 0) {
+      return "green";
+    } else if (result < 0) {
+      return "red";
+    } else {
+      return "grey";
+    }
+  };
+
   return (
     <div id="landing">
       <NavBar />
@@ -75,6 +88,56 @@ export default function Landing() {
                 </label>
 
                 <button type="submit">Submit</button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+
+        <Formik
+          initialValues={{
+            text: "",
+          }}
+          validate={(values) => {
+            const errors = {};
+
+            if (!values.text) {
+              // @ts-ignore
+              errors.text = "Text required";
+            }
+
+            return errors;
+          }}
+          onSubmit={async (values) => {
+            const res = await axios.get(`/v1/sentiment-analysis`, {
+              params: values,
+            });
+
+            setSentimentalAnalysis(res.data.result);
+          }}
+        >
+          {() => (
+            <Form>
+              <div className="form-container textarea">
+                <label htmlFor="text">Sentiment Analysis</label>
+                <Field
+                  as="textarea"
+                  className="text"
+                  id="text"
+                  name="text"
+                  placeholder="Text to analyze"
+                />
+                <ErrorMessage name="text" component="div" className="error" />
+                <button type="submit">Submit</button>
+                {isFinite(sentimentalAnalysis) && (
+                  <div>
+                    <h3>Sentimental Analysis Result:</h3>
+                    <span
+                      style={{ color: getAnalysisColor(sentimentalAnalysis) }}
+                    >
+                      {sentimentalAnalysis}
+                    </span>
+                  </div>
+                )}
               </div>
             </Form>
           )}
