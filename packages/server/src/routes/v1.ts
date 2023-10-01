@@ -62,8 +62,12 @@ export const v1: FastifyPluginCallback = (server, _, done) => {
     }
 
     if (req.query.download === "true") {
-      const scrapingJSONBuffer = Buffer.from(scrapingData, "utf-8");
-      console.log(scrapingJSONBuffer);
+      const scrapingJSONBuffer = Buffer.from(
+        typeof scrapingData === "string"
+          ? scrapingData
+          : JSON.stringify(scrapingData),
+        "utf-8"
+      );
       res.header(
         "Content-Disposition",
         `attachment; filename=scraping-${Date.now()}.json`
