@@ -62,7 +62,7 @@ This project requires no configuration to run, but it intended to be configured.
 
 ### Drawbacks
 
-Like everything else, this repository has not been immune to drawbacks. Due to the very short development timeframe, some important features had to have been left out, here's a list I've made while encountering with them:
+Like everything else, this repository has not been immune to drawbacks. Due to the very short development timeframe, some important features had to have been left out, here's a list I've made while encountering them:
 
 - _Weak Typing_ - Even though it is made in TypeScript, there were parts of the system that relied on type casting, and the use of `any`, but the biggest issue is being represented by the lack of type-safety in the usage of the API, with no communication between packages whatsoever.
 
