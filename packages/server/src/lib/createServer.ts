@@ -1,5 +1,4 @@
 import Fastify from "fastify";
-import { LoggerConfig } from "./loggerConfig";
 import { plugins } from "../plugins";
 
 /**
@@ -7,10 +6,7 @@ import { plugins } from "../plugins";
  */
 export const createServer = async () => {
   const server = Fastify({
-    logger:
-      process.env.NODE_ENV === "production"
-        ? LoggerConfig["production"]
-        : LoggerConfig["development"],
+    logger: true,
   });
 
   await server.setErrorHandler(function (error, req, res) {
